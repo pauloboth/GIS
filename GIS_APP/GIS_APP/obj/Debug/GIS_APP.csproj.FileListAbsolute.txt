@@ -35,3 +35,40 @@ c:\users\paulo_both\documents\visual studio 2013\Projects\GIS_APP\GIS_APP\bin\Mi
 c:\users\paulo_both\documents\visual studio 2013\Projects\GIS_APP\GIS_APP\obj\Debug\GIS_APP.dll
 c:\users\paulo_both\documents\visual studio 2013\Projects\GIS_APP\GIS_APP\obj\Debug\GIS_APP.pdb
 C:\Users\Paulo_Both\documents\visual studio 2013\Projects\GIS_APP\GIS_APP\obj\Debug\GIS_APP.csprojResolveAssemblyReference.cache
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\GIS_APP.dll.config
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\GIS_APP.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\GIS_APP.pdb
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Antlr3.Runtime.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\EntityFramework.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\EntityFramework.SqlServer.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Microsoft.AspNet.Identity.Core.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Microsoft.AspNet.Identity.EntityFramework.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Microsoft.AspNet.Identity.Owin.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Newtonsoft.Json.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Owin.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.Helpers.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.Mvc.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.Optimization.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.Razor.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.WebPages.Deployment.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.WebPages.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.WebPages.Razor.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\WebGrease.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.Helpers.xml
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.Mvc.xml
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.Optimization.xml
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.Razor.xml
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.WebPages.xml
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.WebPages.Deployment.xml
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.WebPages.Razor.xml
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Antlr3.Runtime.pdb
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Newtonsoft.Json.xml
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\EntityFramework.xml
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\EntityFramework.SqlServer.xml
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Microsoft.AspNet.Identity.Core.xml
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Microsoft.AspNet.Identity.Owin.xml
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Microsoft.AspNet.Identity.EntityFramework.xml
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\obj\Debug\GIS_APP.csprojResolveAssemblyReference.cache
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\obj\Debug\GIS_APP.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\obj\Debug\GIS_APP.pdb
