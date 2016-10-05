@@ -1,0 +1,123 @@
+﻿<div class="panel">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-8">
+                <div id="map" style="width: 100%; height: 400px;"></div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-2">Largura:</div>
+                    <div class="col-md-3">
+                        <input type="number" class="form-control" placeholder="Largura" id="largura" />
+                    </div>
+                    <div class="col-md-6">
+                        <a class="btn btn-success" id="clear">Limpar</a>
+                        <a class="btn btn-success" id="stop">Parar</a>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="navegar" placeholder="Navegar" />
+                    </div>
+                    <div class="col-md-8">
+                        <input type="number" class="form-control" id="velocidade" placeholder="Velocidade" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+</script>
+<script type="text/javascript">
+    var largura = 15;
+    var zoom = 17;
+    var circles = [];
+    var canMark = false;
+    var dif = -0.00003; //-0.000021457672119140625;
+    var center = { lat: -27.635424331918777, lng: -54.13765009492636 };
+
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: zoom,
+        center: center, //new google.maps.LatLng(-27.635424331918777, -54.13765009492636),
+        mapTypeId: google.maps.MapTypeId.SATELLITE
+    });
+
+    $(function () {
+        $('#largura').val(largura);
+        $('#velocidade').val(dif);
+        $('#largura').change(function (event) {
+            largura = parseInt($(this).val());
+        });
+        $('#velocidade').change(function (event) {
+            dif = parseFloat($(this).val());
+        });
+        $('#clear').click(function () {
+            $(circles).each(function (index, item) {
+                item.setMap(null);
+            });
+        });
+        $('#stop').click(function () {
+            canMark = false;
+        });
+
+    });
+    $(document).on('keydown keyup', '#navegar', function (event) {
+        //console.log(event);
+        var lat = center.lat;
+        var lng = center.lng;
+        switch (event.keyCode) {
+            case 37:
+                lng = lng + dif;
+                break;
+            case 38:
+                lat = lat - dif;
+                break;
+            case 39:
+                lng = lng - dif;
+                break;
+            case 40:
+                lat = lat + dif;
+                break;
+        }
+        center = { lat: lat, lng: lng };
+        map.setCenter(center);
+        Marker(lat, lng);
+    });
+
+    map.addListener("mousemove", function (event) {
+        var lat = event.latLng.lat();
+        var lng = event.latLng.lng();
+        if (canMark)
+            Marker(lat, lng);
+    });
+
+    map.addListener("click", function (event) {
+        canMark = !canMark;
+        //console.log(canMark);
+    });
+    //google.maps.event.addListener(map, "mousemove", function (event) {
+    //    var lat = event.latLng.lat();
+    //    var lon = event.latLng.lng();
+    //    Marker(lat, lon);
+    //    //console.log(lat + ', ' + lon);
+    //});
+
+    function Marker(lat, lng) {
+        console.log(lat + ', ' + lng);
+        var circle = new google.maps.Circle({
+            strokeColor: '#FF0000',
+            strokeOpacity: 0,//0.8,
+            strokeWeight: 0,//2,
+            fillColor: 'red', //'#FF0000',
+            fillOpacity: 0.5,
+            map: map,
+            center: new google.maps.LatLng(lat, lng),//{ lat: lat, lng: lon },
+            radius: largura / 2
+        });
+        circles.push(circle);
+    }
+</script>
