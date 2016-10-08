@@ -18,9 +18,9 @@
                 </div>
                 <br />
                 <div class="row">
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" id="navegar" placeholder="Navegar" />
-                    </div>
+                    @*<div class="col-md-4">
+                            <input type="text" class="form-control" id="navegar" placeholder="Navegar" />
+                        </div>*@
                     <div class="col-md-8">
                         <input type="number" class="form-control" id="velocidade" placeholder="Velocidade" />
                     </div>
@@ -38,7 +38,7 @@
     var circles = [];
     var canMark = false;
     var dif = -0.00003; //-0.000021457672119140625;
-    var center = { lat: -27.635424331918777, lng: -54.13765009492636 };
+    var center = { lat: -27.635424331918777, lng: -54.13765009492636 };//{lat: 33.678, lng: -116.243};
 
     var map = new google.maps.Map(document.getElementById('map'), {
         zoom: zoom,
@@ -47,6 +47,7 @@
     });
 
     $(function () {
+        Marker(center);
         $('#largura').val(largura);
         $('#velocidade').val(dif);
         $('#largura').change(function (event) {
@@ -65,7 +66,7 @@
         });
 
     });
-    $(document).on('keydown keyup', '#navegar', function (event) {
+    $(document).on('keydown', '#navegar, body', function (event) {//keyup keypress
         //console.log(event);
         var lat = center.lat;
         var lng = center.lng;
@@ -85,18 +86,22 @@
         }
         center = { lat: lat, lng: lng };
         map.setCenter(center);
-        Marker(lat, lng);
+        Marker(center);
     });
 
     map.addListener("mousemove", function (event) {
         var lat = event.latLng.lat();
         var lng = event.latLng.lng();
         if (canMark)
-            Marker(lat, lng);
+            Marker({ lat: lat, lng: lng });
     });
 
     map.addListener("click", function (event) {
         canMark = !canMark;
+        var lat = event.latLng.lat();
+        var lng = event.latLng.lng();
+        center = { lat: lat, lng: lng };
+        map.setCenter(center);
         //console.log(canMark);
     });
     //google.maps.event.addListener(map, "mousemove", function (event) {
@@ -106,18 +111,38 @@
     //    //console.log(lat + ', ' + lon);
     //});
 
-    function Marker(lat, lng) {
-        console.log(lat + ', ' + lng);
-        var circle = new google.maps.Circle({
+    function Marker(center) {
+        console.log(center.lat + ', ' + center.lng);
+        //var circle = new google.maps.Circle({
+        //    strokeColor: 'blue',//'#FF0000',
+        //    strokeOpacity: 1,//0.8,
+        //    strokeWeight: 2,//2,
+        //    fillColor: 'red', //'#FF0000',
+        //    fillOpacity: 0.5,
+        //    map: map,
+        //    center: center,
+        //    radius: largura / 2
+        //});
+        //circles.push(circle);
+
+        var rectangle = new google.maps.Rectangle({
             strokeColor: '#FF0000',
-            strokeOpacity: 0,//0.8,
+            strokeOpacity: 0.8,
             strokeWeight: 0,//2,
-            fillColor: 'red', //'#FF0000',
+            fillColor: '#FF0000',
             fillOpacity: 0.5,
             map: map,
-            center: new google.maps.LatLng(lat, lng),//{ lat: lat, lng: lon },
-            radius: largura / 2
+            //center: center,
+            //radius: largura / 2,
+            bounds: {
+                north: center.lat - dif, //33.685,
+                south: center.lat + dif,//33.671,
+                east: center.lng - dif,//-116.234,
+                west: center.lng + dif//-116.251
+
+            }
         });
-        circles.push(circle);
+        circles.push(rectangle);
+        //poly.setMap(map);
     }
 </script>
