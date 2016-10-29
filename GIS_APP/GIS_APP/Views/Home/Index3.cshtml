@@ -12,7 +12,7 @@
                         <input type="number" class="form-control" placeholder="Largura" id="largura" />
                     </div>
                     <div class="col-md-6">
-                        <a class="btn btn-success" id="clear">Limpar</a>
+                        <a class="btn btn-success" onclick="clearMarkers()">Limpar</a>
                         <a class="btn btn-success" id="stop">Parar</a>
                     </div>
                 </div>
@@ -28,50 +28,115 @@
                         <input type="number" class="form-control" id="inclinacao" placeholder="Inclinação" />
                     </div>
                 </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-6 col-xs-12">
+                        <div id="bl">
+                            <div id="block">
+                                <div class="a">A</div>
+                                <div class="b">B</div>
+                                <div class="c">C</div>
+                                <div class="d">D</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xs-12" style="padding: 0;">
+                        <ul id="block_p" style="list-style: none; padding: 0;"></ul>
+                    </div>
+                    <style>
+                        #bl {
+                            width: 200px;
+                            height: 200px;
+                            border: 1px solid;
+                            position: relative;
+                            padding: 50px;
+                            /*background-size: 100% 1em;
+                            background-image: linear-gradient(0deg, transparent 80px, #000000 80px, #000000 80px, transparent 80px), linear-gradient(#000 0.05em, transparent .05em);*/
+                        }
+
+                        #block {
+                            width: 100px;
+                            height: 100px;
+                            border: 1px solid;
+                            transform: rotate(0deg);
+                            font-weight: bold;
+                        }
+
+                            #block > div {
+                                width: 1px;
+                                height: 1px;
+                                border: 5px solid;
+                                position: absolute;
+                            }
+
+                            #block > .a {
+                                left: 0;
+                                top: 0;
+                            }
+
+                            #block > .b {
+                                right: 0;
+                                top: 0;
+                            }
+
+                            #block > .c {
+                                left: 0;
+                                bottom: 0;
+                            }
+
+                            #block > .d {
+                                bottom: 0;
+                                right: 0;
+                            }
+                    </style>
+                    <script>
+                        function margins() {
+                            var _s = 10000;
+                            $('#block_p').html('');
+                            $('#block > div').each(function (index, item) {
+                                var top = $(item).position().top;
+                                top = Math.round(top * _s) / _s;
+                                var left = $(item).position().left;
+                                left = Math.round(left * _s) / _s;
+                                var text = $(item).text();
+                                var txt = text + ' = top: ' + top + ', left: ' + left;
+                                $('#block_p').append($('<li>' + txt + '</li>'));
+                                console.log(txt);
+                            });
+                            console.log('______________________________________');
+                        }
+
+                    </script>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<script>
+<script src="~/Content/site.js"></script>
 
-</script>
 <script type="text/javascript">
-    var largura = 15;
-    var zoom = 18;
-    var circles = [];
-    var points = [];
-    var lines = [];
     var canMark = false;
     var dif = mtr_grau(15); //-0.000021457672119140625;
-    var center = { lat: -27.635424331918777, lng: -54.13765009492636 };//{lat: 33.678, lng: -116.243};
-    var lastP = center;
     var grau = mtr_grau(5);
-    var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: zoom,
-        center: center, //new google.maps.LatLng(-27.635424331918777, -54.13765009492636),
-        mapTypeId: google.maps.MapTypeId.SATELLITE
-    });
 
     $(function () {
         //Marker(center);
-        $('#largura').val(largura);
+        $('#largura').val(width);
         $('#velocidade').val(grau_mtr(dif));
         $('#inclinacao').val(grau_mtr(grau));
         $('#largura').change(function (event) {
-            largura = parseInt($(this).val());
+            width = parseInt($(this).val());
         });
         $('#velocidade').change(function (event) {
             dif = mtr_grau(parseFloat($(this).val()));
         });
         $('#inclinacao').change(function (event) {
+            var val = $(this).val();
             grau = mtr_grau(parseInt($(this).val()));
+            $('#block').attr('style', 'transform: rotate(' + val + 'deg);');
+            margins();
         });
 
-        $('#clear').click(function () {
-            $(circles).each(function (index, item) { item.setMap(null); });
-            $(points).each(function (index, item) { item.setMap(null); });
-            $(lines).each(function (index, item) { item.setMap(null); });
-        });
         $('#stop').click(function () {
             canMark = false;
         });
@@ -97,14 +162,14 @@
         }
         center = { lat: lat, lng: lng };
         map.setCenter(center);
-        Marker(center);
+        addMarker(center);
     });
 
     map.addListener("mousemove", function (event) {
         var lat = event.latLng.lat();
         var lng = event.latLng.lng();
         if (canMark)
-            Marker({ lat: lat, lng: lng });
+            addMarker({ lat: lat, lng: lng });
     });
 
     map.addListener("click", function (event) {
@@ -113,133 +178,49 @@
         var lng = event.latLng.lng();
         center = { lat: lat, lng: lng };
         map.setCenter(center);
-
-        Point(center);
-        CalculaDistancia(lastP, center);
-        lastP = center;
-        //console.log(canMark);
+        CalculaDistancia(last_marker, center);
+        addPolygon(center);
+        addMarker(center);
+        last_marker = center;
     });
-    //google.maps.event.addListener(map, "mousemove", function (event) {
-    //    var lat = event.latLng.lat();
-    //    var lon = event.latLng.lng();
-    //    Marker(lat, lon);
-    //    //console.log(lat + ', ' + lon);
-    //});
-
-    function Marker(c) {
-        console.log('Lat: ' + c.lat + '  Lng: ' + c.lng);
-        //var circle = new google.maps.Circle({
-        //    strokeColor: 'blue',//'#FF0000',
-        //    strokeOpacity: 0,//0.8,
-        //    strokeWeight: 0,//2,
-        //    fillColor: 'red', //'#FF0000',
-        //    fillOpacity: 0.5,
-        //    map: map,
-        //    center: center,
-        //    radius: largura / 2
-        //});
-        //circles.push(circle);
-
-        //var rectangle = new google.maps.Rectangle({
-        //    strokeColor: 'red',
-        //    strokeOpacity: 1,
-        //    strokeWeight: 1,//2,
-        //    fillColor: 'red',
-        //    fillOpacity: 0.5,
-        //    map: map,
-        //    //center: center,
-        //    //radius: largura / 2,
-        //    bounds: {
-        //        north: center.lat + dif, //33.685,
-        //        south: center.lat - dif,//33.671,
-        //        east: center.lng + dif / 2,//-116.234,
-        //        west: center.lng - dif / 2//-116.251
-
-        //    }
-        //});
-        //circles.push(rectangle);
-        //poly.setMap(map);
-        var l1 = c.lat - dif;
-        var l2 = c.lat + dif;
-
-        var n1 = c.lng - dif;// / 2;
-        var n2 = c.lng + dif;// / 2;
-        var g = grau;///dif;// * 100;
-
-        var p1 = { lat: l2 - g, lng: n1 - g };
-        var p2 = { lat: l2 + g, lng: n2 - g };
-        var p3 = { lat: l1 + g, lng: n2 + g };
-        var p4 = { lat: l1 - g, lng: n1 + g };
-
-        var Polygon = new google.maps.Polygon({
-            map: map,
-            strokeColor: 'red',
-            strokeOpacity: 1,
-            strokeWeight: 1,
-            fillColor: 'red',
-            fillOpacity: 0.5,
-            paths: [p1, p2, p3, p4]
-        });
-        //Point(l1 - g, n1 - g);
-        circles.push(Polygon);
-        ClAng(lastP, c);
-        lastP = c;
-    }
-
-    function ClAng(l, n) {
-        Polyline(l, n);
-        //Point(n);
-    }
-
-    function grau_mtr(grau) {
-        var mtr = grau * 111319;
-        // mtr = Math.round(mtr);
-        return mtr;
-    }
-
-    function mtr_grau(mtr) {
-        var grau = mtr / 111319;
-        return grau;
-    }
-
-    function Point(center) {
-        var point = new google.maps.Marker({
-            position: center,
-            map: map
-        });
-        points.push(point);
-    }
-
-    function Polyline(m1, m2) {
-        var line = new google.maps.Polyline({
-            map: map,
-            path: [m1, m2],
-            geodesic: true,
-            strokeColor: 'red',
-            strokeOpacity: 1,
-            strokeWeight: 2
-        });
-        lines.push(line);
-    }
 
     function CalculaDistancia(p1, p2) {
         var ca = p1.lat - p2.lat;
         ca = ca < 0 ? ca * -1 : ca;
         var co = p1.lng - p2.lng;
         co = co < 0 ? co * -1 : co;
-        var hip = Math.pow(ca, 2) - Math.pow(co, 2);
+        var hip = Math.pow(ca, 2) + Math.pow(co, 2);
         hip = hip < 0 ? hip * -1 : hip;
         hip = Math.sqrt(hip);
-        var m = grau_mtr(hip);
-        console.log(m);
-        Polyline(p1, p2);
-        Polyline(p2, { lat: p1.lat, lng: p2.lng });
-        Polyline(p2, { lat: p2.lat, lng: p1.lng });
-        var seno = ca / hip;
-        var cosseno = co / hip;
-        var tangente = ca / co;
+        console.log('ca: ' + ca + ', co: ' + co + ', hip: ' + hip);
+        //var m = grau_mtr(hip);
+        //console.log(m);
+        addPolyline(p1, p2);
+        addPolyline(p2, { lat: p1.lat, lng: p2.lng });
+        addPolyline(p2, { lat: p2.lat, lng: p1.lng });
+        addPolyline(p1, { lat: p1.lat, lng: p2.lng });
+        addPolyline(p1, { lat: p2.lat, lng: p1.lng });
+        seno = ca / hip;
+        seno = Math.round(seno * 1000) / 1000;
+        cosseno = co / hip;
+        cosseno = Math.round(cosseno * 1000) / 1000;
+        tangente = ca / co;
+        tangente = Math.round(tangente * 1000) / 1000;
+
         console.log('seno: ' + seno + ', cosseno: ' + cosseno + ', tangente: ' + tangente);
     }
+
+    function getDegTan(deg) {
+        var rad = deg * Math.PI / 180;
+        return Math.tan(rad);
+    }
+
+    function getTanDeg(tan) {
+        var rad = Math.tan(tan);
+        var rad = tan * Math.PI / 180;
+        return Math.tan(rad);
+    }
+
 </script>
 Seno = Cateto oposto/hipotenusa
 Cosseno = Cateto adjacente/hipotenusa
