@@ -1,0 +1,225 @@
+﻿<div class="panel">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-8">
+                <div id="map" style="width: 100%; height: 400px;"></div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-2">Largura:</div>
+                    <div class="col-md-3">
+                        <input type="number" class="form-control" placeholder="Largura" id="largura" />
+                    </div>
+                    <div class="col-md-6">
+                        <a class="btn btn-success" onclick="clearMarkers()">Limpar</a>
+                        <a class="btn btn-success" id="stop">Parar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var Polylines = [];
+    var Markers = [];
+    var Polygons = [];
+    var Points = [];
+
+    var center = { lat: -27.635424331918777, lng: -54.13765009492636 };
+    var last_marker = center;
+    var width = 15;
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 18,
+        center: center, //new google.maps.LatLng(-27.635424331918777, -54.13765009492636),
+        mapTypeId: google.maps.MapTypeId.SATELLITE
+    });
+    var canMark = false;
+
+
+    $(function () {
+        addMarker(center);
+        $('#largura').val(width);
+        $('#largura').change(function (event) {
+            width = parseInt($(this).val());
+        });
+
+        $('#stop').click(function () {
+            canMark = false;
+        });
+
+    });
+
+
+    map.addListener("mousemove", function (event) {
+        var lat = event.latLng.lat();
+        var lng = event.latLng.lng();
+        var center = { lat: lat, lng: lng };
+        var dist = distance(last_marker, center);
+        if (dist > width/2) {
+            new_point(last_marker, center);
+            last_marker = center;
+        }
+        //addMarker({ lat: lat, lng: lng });
+        //FilterList(_c);
+    });
+
+    map.addListener("click", function (event) {
+        canMark = false;//!canMark;
+        lat = event.latLng.lat();
+        lng = event.latLng.lng();
+        center = { lat: lat, lng: lng };
+        //map.setCenter(center);
+        new_point(last_marker, center);
+
+        //addPolygon(center);
+        //addMarker(center);
+        last_marker = center;
+    });
+
+
+    function new_point(p1, p2) {
+        //addPolyline(p1, p2);
+        lat1 = p1.lat;
+        lng1 = p1.lng;
+        lat2 = p2.lat;
+        lng2 = p2.lng;
+
+        brng = bearing(lat1, lng1, lat2, lng2);
+        if (brng < 90)
+            brng = 360 + brng;
+        _p = points_of_square(lat1, lng1, lat2, lng2, brng, width / 2);
+        //console.log(point);
+
+        p1 = _p[0];
+        p2 = _p[1];
+        p3 = _p[2];
+        p4 = _p[3];
+        Points.push([p1, p2, p3, p4]);
+        addPolygon(p1, p2, p3, p4);
+    }
+
+    function FilterList(_c) {
+        _max_lat = _c.lat + width;
+        _min_lat = _c.lat - width;
+        _max_lng = _c.lng + width;
+        _min_lng = _c.lng - width;
+        $(Circles).each(function (index, item) {
+            lat = item.center.lat();
+            lng = item.center.lng();
+            _b_lat = _max_lat > lat && _min_lat < lat;
+            _b_lng = _max_lng > lng && _min_lng < lng;
+            _b = _b_lat && _b_lng;
+            if (_b)
+                item.setOptions({ fillColor: 'blue' });
+            else
+                item.setOptions({ fillColor: 'red' });
+            //return _b_lat && _b_lng;
+        });
+        //console.log(list);
+    }
+</script>
+
+<script>
+    //http://www.movable-type.co.uk/scripts/latlong.html
+    //Note: angles need to be in radians to pass to trig functions
+
+    var R = 6371e3; //earth mean radius in km
+
+    //converts degrees to radians
+    function deg2rad(d) {
+        return d * (Math.PI / 180);
+    }
+
+    //converts radians to degrees
+    function rad2deg(r) {
+        return r / (Math.PI / 180);
+    }
+
+    //Distance given two points
+    function distance(p1, p2) {
+        lat1r = deg2rad(p1.lat);
+        lat2r = deg2rad(p2.lat);
+
+        x = (p2.lng - p1.lng) * Math.cos((lat1r + lat2r) / 2);
+        y = p2.lat - p1.lat;
+        return Math.sqrt(x * x + y * y) * deg2rad(R);
+    }
+
+    //Bearing given two points
+    function bearing(lat1, lon1, lat2, lon2) {
+        lat1r = deg2rad(lat1);
+        lon1r = deg2rad(lon1);
+        lat2r = deg2rad(lat2);
+        lon2r = deg2rad(lon2);
+
+        y = Math.sin(lon2r - lon1r) * Math.cos(lat2r);
+        x = Math.cos(lat1r) * Math.sin(lat2r) - Math.sin(lat1r) * Math.cos(lat2r) * Math.cos(lon2r - lon1r);
+
+        return rad2deg(Math.atan2(y, x));
+    }
+
+    //Destination point given distance and bearing from start point
+    function dest_point(lat, lon, brng, dist) {
+        latr = deg2rad(lat);
+        lonr = deg2rad(lon);
+        brngr = deg2rad(brng);
+
+        dlat = Math.asin(Math.sin(latr) * Math.cos(dist / R) + Math.cos(latr) * Math.sin(dist / R) * Math.cos(brngr));
+        dlon = lonr + Math.atan2(Math.sin(brngr) * Math.sin(dist / R) * Math.cos(latr), Math.cos(dist / R) - Math.sin(latr) * Math.sin(dlat));
+
+        return { lat: rad2deg(dlat), lng: rad2deg(dlon) };
+    }
+
+    //Calculate the four points of a square
+    function points_of_square(lat1, lon1, lat2, lon2, brng, dist) {
+        brng1 = Math.abs(brng - 90);//fabs(brng - 90);
+        brng2 = (brng1 + 180) % 360;
+
+        p0 = dest_point(lat1, lon1, brng1, dist);
+        p1 = dest_point(lat2, lon2, brng1, dist);
+        p2 = dest_point(lat2, lon2, brng2, dist);
+        p3 = dest_point(lat1, lon1, brng2, dist);
+
+        return [p0, p1, p2, p3];
+    }
+
+</script>
+
+<script>
+
+    function addPolyline(p1, p2) {
+        var line = new google.maps.Polyline({
+            map: map,
+            path: [p1, p2],
+            geodesic: true,
+            strokeColor: 'red',
+            strokeOpacity: 1,
+            strokeWeight: 2
+        });
+        Polylines.push(line);
+    }
+
+    function addMarker(p) {
+        var marker = new google.maps.Marker({
+            map: map,
+            position: p,
+        });
+        Markers.push(marker);
+    }
+
+
+    function addPolygon(p1, p2, p3, p4) {
+        var polygon = new google.maps.Polygon({
+            map: map,
+            strokeColor: 'red',
+            strokeOpacity: 1,
+            strokeWeight: 1,
+            fillColor: 'red',
+            fillOpacity: 0.5,
+            paths: [p1, p2, p3, p4]
+        });
+        Polygons.push(polygon);
+    }
+</script>
