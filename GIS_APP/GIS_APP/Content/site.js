@@ -118,17 +118,17 @@ function mtr_grau(mtr) {
     return grau;
 }
 
-function distance(p1, p2) {
-    var ca = p1.lat - p2.lat;
-    ca = ca < 0 ? ca * -1 : ca;
-    var co = p1.lng - p2.lng;
-    co = co < 0 ? co * -1 : co;
-    var hip = Math.pow(ca, 2) + Math.pow(co, 2);
-    hip = hip < 0 ? hip * -1 : hip;
-    hip = Math.sqrt(hip);
-     console.log('ca: ' + ca + ', co: ' + co + ', hip: ' + hip);
-    return hip;
-}
+//function distance(p1, p2) {
+//    var ca = p1.lat - p2.lat;
+//    ca = ca < 0 ? ca * -1 : ca;
+//    var co = p1.lng - p2.lng;
+//    co = co < 0 ? co * -1 : co;
+//    var hip = Math.pow(ca, 2) + Math.pow(co, 2);
+//    hip = hip < 0 ? hip * -1 : hip;
+//    hip = Math.sqrt(hip);
+//     console.log('ca: ' + ca + ', co: ' + co + ', hip: ' + hip);
+//    return hip;
+//}
 
 function addArea() {
 
