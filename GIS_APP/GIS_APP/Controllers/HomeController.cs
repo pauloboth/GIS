@@ -27,5 +27,10 @@ namespace GIS_APP.Controllers
         {
             return View();
         }
+
+        public ActionResult Index4()
+        {
+            return View();
+        }
     }
 }
