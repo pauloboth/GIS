@@ -70,8 +70,8 @@ function addRectangle(p) {
 }
 
 function addPolygon(p) {
-    addPolyline(last_marker, p);
-    var hipo = distance(last_marker, p);
+   // addPolyline(last_marker, p);
+    //var hipo = distance(last_marker, p);
 
     //poly.setMap(map);
     var l1 = p.lat - dif;
@@ -79,7 +79,7 @@ function addPolygon(p) {
 
     var n1 = p.lng - dif;// / 2;
     var n2 = p.lng + dif;// / 2;
-    var g = hipo;//0;//grau;///dif;// * 100;
+    var g = 0;//dif;// * 100;
 
     var p1 = { lat: l2 - g, lng: n1 - g };
     var p2 = { lat: l2 + g, lng: n2 - g };

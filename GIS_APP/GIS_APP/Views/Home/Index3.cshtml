@@ -43,6 +43,9 @@
                     <div class="col-md-6 col-xs-12" style="padding: 0;">
                         <ul id="block_p" style="list-style: none; padding: 0;"></ul>
                     </div>
+                    <div class="col-md-6">
+                        <span id="direcoes"></span>
+                    </div>
                     <style>
                         #bl {
                             width: 200px;
@@ -120,7 +123,7 @@
     var grau = mtr_grau(5);
 
     $(function () {
-        //Marker(center);
+        addMarker(center);
         $('#largura').val(width);
         $('#velocidade').val(grau_mtr(dif));
         $('#inclinacao').val(grau_mtr(grau));
@@ -168,8 +171,14 @@
     map.addListener("mousemove", function (event) {
         var lat = event.latLng.lat();
         var lng = event.latLng.lng();
-        if (canMark)
-            addMarker({ lat: lat, lng: lng });
+        var _c = { lat: lat, lng: lng };
+        //addPolygon(_c);
+        //if (canMark)
+        //addCircle(_c);
+        //addMarker({ lat: lat, lng: lng });
+        //FilterList(_c);
+        CalculaDistancia(last_marker, _c);
+        last_marker = _c;
     });
 
     map.addListener("click", function (event) {
@@ -178,28 +187,49 @@
         var lng = event.latLng.lng();
         center = { lat: lat, lng: lng };
         map.setCenter(center);
+        //CalculaDistancia(last_marker, center);
         CalculaDistancia(last_marker, center);
         addPolygon(center);
-        addMarker(center);
+        //addMarker(center);
         last_marker = center;
     });
 
     function CalculaDistancia(p1, p2) {
+        var _a = 'Norte/Sul';
+        var _b = 'Leste/Oeste';
+        var _c = 'Nordeste/Sudeste/Noroeste/Sudoeste';
+
         var ca = p1.lat - p2.lat;
-        ca = ca < 0 ? ca * -1 : ca;
         var co = p1.lng - p2.lng;
+        //console.log(ca);
+        //console.log(co);
+        _a = ca < 0 ? 'Norte' : 'Sul';
+        _b = co < 0 ? 'Leste' : 'Oeste';
+        if (ca < 0 && co < 0)
+            _c = 'Nordeste';
+        else if (ca < 0)
+            _c = 'Noroeste';
+        else if (co < 0)
+            _c = 'Sudeste';
+        else
+            _c = 'Sudoeste';
+        $('#direcoes').html(_a + ", " + _b + ' (' + _c + ')');
+
+        ca = ca < 0 ? ca * -1 : ca;
         co = co < 0 ? co * -1 : co;
+
         var hip = Math.pow(ca, 2) + Math.pow(co, 2);
         hip = hip < 0 ? hip * -1 : hip;
         hip = Math.sqrt(hip);
-        console.log('ca: ' + ca + ', co: ' + co + ', hip: ' + hip);
+
+        //console.log('ca: ' + ca + ', co: ' + co + ', hip: ' + hip);
         //var m = grau_mtr(hip);
         //console.log(m);
         addPolyline(p1, p2);
-        addPolyline(p2, { lat: p1.lat, lng: p2.lng });
-        addPolyline(p2, { lat: p2.lat, lng: p1.lng });
-        addPolyline(p1, { lat: p1.lat, lng: p2.lng });
-        addPolyline(p1, { lat: p2.lat, lng: p1.lng });
+        //addPolyline(p2, { lat: p1.lat, lng: p2.lng });
+        //addPolyline(p2, { lat: p2.lat, lng: p1.lng });
+        //addPolyline(p1, { lat: p1.lat, lng: p2.lng });
+        //addPolyline(p1, { lat: p2.lat, lng: p1.lng });
         seno = ca / hip;
         seno = Math.round(seno * 1000) / 1000;
         cosseno = co / hip;
@@ -207,7 +237,7 @@
         tangente = ca / co;
         tangente = Math.round(tangente * 1000) / 1000;
 
-        console.log('seno: ' + seno + ', cosseno: ' + cosseno + ', tangente: ' + tangente);
+        //console.log('seno: ' + seno + ', cosseno: ' + cosseno + ', tangente: ' + tangente);
     }
 
     function getDegTan(deg) {
@@ -220,7 +250,25 @@
         var rad = tan * Math.PI / 180;
         return Math.tan(rad);
     }
-
+    function FilterList(_c) {
+        var _max_lat = _c.lat + dif;
+        var _min_lat = _c.lat - dif;
+        var _max_lng = _c.lng + dif;
+        var _min_lng = _c.lng - dif;
+        $(Circles).each(function (index, item) {
+            var lat = item.center.lat();
+            var lng = item.center.lng();
+            var _b_lat = _max_lat > lat && _min_lat < lat;
+            var _b_lng = _max_lng > lng && _min_lng < lng;
+            var _b = _b_lat && _b_lng;
+            if (_b)
+                item.setOptions({ fillColor: 'blue' });
+            else
+                item.setOptions({ fillColor: 'red' });
+            //return _b_lat && _b_lng;
+        });
+        //console.log(list);
+    }
 </script>
 Seno = Cateto oposto/hipotenusa
 Cosseno = Cateto adjacente/hipotenusa
