@@ -7,13 +7,20 @@
 
             <div class="col-md-4">
                 <div class="row">
-                    <div class="col-md-2">Largura:</div>
-                    <div class="col-md-3">
-                        <input type="number" class="form-control" placeholder="Largura" id="largura" />
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label>Largura:</label>
+                            <input type="number" class="form-control" placeholder="width" id="width" />
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label>Comprimento:</label>
+                            <input type="number" class="form-control" placeholder="height" id="height" />
+                        </div>
                     </div>
                     <div class="col-md-6">
-                        <a class="btn btn-success" onclick="clearMarkers()">Limpar</a>
-                        <a class="btn btn-success" id="stop">Parar</a>
+                        Del for clear
                     </div>
                 </div>
             </div>
@@ -22,59 +29,53 @@
 </div>
 
 <script type="text/javascript">
-    var Polylines = [];
-    var Markers = [];
-    var Polygons = [];
-    var Points = [];
-
-    var center = { lat: -27.635424331918777, lng: -54.13765009492636 };
-    var last_marker = center;
-    var width = 15;
-    var map = new google.maps.Map(document.getElementById('map'), {
+    Polylines = [];
+    Markers = [];
+    Polygons = [];
+    Points = [];
+    center = { lat: -27.635424331918777, lng: -54.13765009492636 };
+    last_marker = center;
+    width = 15;
+    height = 15;
+    map = new google.maps.Map(document.getElementById('map'), {
         zoom: 18,
         center: center, //new google.maps.LatLng(-27.635424331918777, -54.13765009492636),
         mapTypeId: google.maps.MapTypeId.SATELLITE
     });
-    var canMark = false;
-
 
     $(function () {
         addMarker(center);
-        $('#largura').val(width);
-        $('#largura').change(function (event) {
+        $('#width').val(width);
+        $('#height').val(height);
+        $('#width').change(function (event) {
             width = parseInt($(this).val());
         });
-
-        $('#stop').click(function () {
-            canMark = false;
+        $('#height').change(function (event) {
+            height = parseInt($(this).val());
         });
-
+        $('body').keyup(function (event) {
+            if (event.keyCode == 46)
+                clearMarkers();
+        });
     });
 
-
     map.addListener("mousemove", function (event) {
-        var lat = event.latLng.lat();
-        var lng = event.latLng.lng();
-        var center = { lat: lat, lng: lng };
-        var dist = distance(last_marker, center);
-        if (dist > width/2) {
+        lat = event.latLng.lat();
+        lng = event.latLng.lng();
+        center = { lat: lat, lng: lng };
+        dist = distance(last_marker, center);
+        if (dist > height) {
             new_point(last_marker, center);
             last_marker = center;
         }
-        //addMarker({ lat: lat, lng: lng });
-        //FilterList(_c);
     });
 
     map.addListener("click", function (event) {
-        canMark = false;//!canMark;
         lat = event.latLng.lat();
         lng = event.latLng.lng();
         center = { lat: lat, lng: lng };
         //map.setCenter(center);
         new_point(last_marker, center);
-
-        //addPolygon(center);
-        //addMarker(center);
         last_marker = center;
     });
 
@@ -87,7 +88,7 @@
         lng2 = p2.lng;
 
         brng = bearing(lat1, lng1, lat2, lng2);
-        if (brng < 90)
+        if (brng < 90)//pq se for menor que 90 fica bugado
             brng = 360 + brng;
         _p = points_of_square(lat1, lng1, lat2, lng2, brng, width / 2);
         //console.log(point);
@@ -190,7 +191,7 @@
 <script>
 
     function addPolyline(p1, p2) {
-        var line = new google.maps.Polyline({
+        line = new google.maps.Polyline({
             map: map,
             path: [p1, p2],
             geodesic: true,
@@ -202,7 +203,7 @@
     }
 
     function addMarker(p) {
-        var marker = new google.maps.Marker({
+        marker = new google.maps.Marker({
             map: map,
             position: p,
         });
@@ -211,7 +212,7 @@
 
 
     function addPolygon(p1, p2, p3, p4) {
-        var polygon = new google.maps.Polygon({
+        polygon = new google.maps.Polygon({
             map: map,
             strokeColor: 'red',
             strokeOpacity: 1,
@@ -221,5 +222,11 @@
             paths: [p1, p2, p3, p4]
         });
         Polygons.push(polygon);
+    }
+
+    function clearMarkers() {
+        $(Polylines).each(function (index, item) { item.setMap(null); });
+        $(Markers).each(function (index, item) { item.setMap(null); });
+        $(Polygons).each(function (index, item) { item.setMap(null); });
     }
 </script>
