@@ -88,8 +88,7 @@
         lng2 = p2.lng;
 
         brng = bearing(lat1, lng1, lat2, lng2);
-        if (brng < 90)//pq se for menor que 90 fica bugado
-            brng = 360 + brng;
+
         _p = points_of_square(lat1, lng1, lat2, lng2, brng, width / 2);
         //console.log(point);
 
@@ -158,7 +157,11 @@
         y = Math.sin(lon2r - lon1r) * Math.cos(lat2r);
         x = Math.cos(lat1r) * Math.sin(lat2r) - Math.sin(lat1r) * Math.cos(lat2r) * Math.cos(lon2r - lon1r);
 
-        return rad2deg(Math.atan2(y, x));
+        //return rad2deg(Math.atan2(y, x));
+        brng = rad2deg(Math.atan2(y, x));
+        if (brng < 0)
+            brng += 360;
+        return brng;
     }
 
     //Destination point given distance and bearing from start point
@@ -175,7 +178,10 @@
 
     //Calculate the four points of a square
     function points_of_square(lat1, lon1, lat2, lon2, brng, dist) {
-        brng1 = Math.abs(brng - 90);//fabs(brng - 90);
+        //brng1 = Math.abs(brng - 90);//fabs(brng - 90);
+        brng1 = brng - 90;
+        if (brng1 < 0)
+            brng1 += 360;
         brng2 = (brng1 + 180) % 360;
 
         p0 = dest_point(lat1, lon1, brng1, dist);
