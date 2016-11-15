@@ -65,8 +65,9 @@
         center = { lat: lat, lng: lng };
         dist = distance(last_marker, center);
         if (dist > height) {
-            new_point(last_marker, center);
+            //new_point(last_marker, center);
             last_marker = center;
+            console.log(lat + ', ' + lng);
         }
     });
 
@@ -235,4 +236,84 @@
         $(Markers).each(function (index, item) { item.setMap(null); });
         $(Polygons).each(function (index, item) { item.setMap(null); });
     }
+</script>
+<script>
+    var ws;
+    var url = window.location.host + "@Url.Content("~/WSHandler.ashx")";
+    function Connect() {
+        try {
+            var urlConnection = "ws://" + url;
+            ws = new WebSocket(urlConnection);
+        } catch (e) { $('#ERRO').html(e); }
+
+        ws.onmessage = function (event) {
+            //Notifications(event.data);
+            var point;
+            try {
+                point = JSON.parse(event.data);
+                center = { lat: point.lat, lng: point.lng };
+                new_point(last_marker, center);
+                last_marker = center;
+            } catch (ex) { }
+
+            console.log(event.data);
+        };
+        ws.onerror = function (event) {
+            //Notifications(event.data);
+            //console.log(event);
+        };
+        ws.onopen = function (event) {
+            //Notifications(event.data);
+            //console.log(event);
+        };
+        ws.onclose = function (event) {
+            // Notifications(event.data);
+            //console.log(event);
+        };
+    }
+
+    function Send(message) {
+        ws.send(message);
+    }
+
+    $(function () {
+        Connect();
+    });
+
+    function Notifications(text) {
+        try {
+            var n;
+            var options = {
+                //icon: '',
+                //iconUrl: '',
+                body: text,
+            };
+
+            if (window.Notification && Notification.permission === "granted") {
+                n = new Notification("", options)
+            } else {
+                if (window.Notification && Notification.permission !== "denied") {
+                    Notification.requestPermission(function (status) {
+                        if (Notification.permission !== status) {
+                            Notification.permission = status;
+                        }
+                        if (status === "granted") {
+                            n = new Notification("", options)
+                        }
+                    });
+                }
+            }
+            try {
+                n.onshow = function () {
+                    setTimeout(n.close.bind(n), 8000);
+                }
+                n.onclick = function () {
+                    n.close()
+                    //  window.focus()
+                }
+            } catch (err) { }
+        } catch (e) {
+            console.log(e)
+        }
+    };
 </script>
