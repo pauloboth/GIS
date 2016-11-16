@@ -1,0 +1,57 @@
+﻿<table class="positions">
+    <tbody></tbody>
+</table>
+<a class="btn btn-danger" onclick="$('.positions tr').remove()" style="position: fixed; bottom: 0; right: 0;">Clear</a>
+<a class="btn btn-primary" onclick="navigator.geolocation.getCurrentPosition(geo_success, geo_error);" style="position: fixed; bottom: 0; left: 0;">Mark</a>
+<style>
+    .positions {
+        width: 100%;
+        font-size: 12px;
+    }
+
+        .positions td {
+            border: 1px solid #000;
+            padding: 0 5px;
+        }
+</style>
+<script>
+    $(function () {
+        Connect();
+    });
+
+    mobile = (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
+    var ws;
+    var url = window.location.host + "@Url.Content("~/WSHandler.ashx")";
+
+    if (mobile && navigator.geolocation)
+        navigator.geolocation.watchPosition(geo_success, geo_error, { enableHighAccuracy: true, maximumAge: Infinity, timeout: 0 });
+
+    //if (navigator.geolocation) {
+    //setInterval(function () {
+    //    navigator.geolocation.getCurrentPosition(geo_success, geo_error);
+    //}, 2000);
+    //}
+
+    function geo_success(position) {
+        index = $('.positions tr').length;
+        $('.positions tbody').append($('<tr><td>' + index + '</td><td>' + position.coords.latitude + '</td><td>' + position.coords.longitude + '</td></tr>'));
+        var obj = {
+            position: { lat: position.coords.latitude, lng: position.coords.longitude },
+            type: 'mobile'
+        }
+        var message = JSON.stringify(obj);
+        ws.send(message);
+    }
+    function geo_error(error) { console.log(error); }
+
+    function Connect() {
+        try {
+            ws = new WebSocket("ws://" + url);
+        } catch (error) { console.log(error); }
+
+        ws.onmessage = function (event) { console.log(event); };
+        ws.onerror = function (event) { console.log(event); };
+        ws.onopen = function (event) { console.log(event); };
+        ws.onclose = function (event) { console.log(event); };
+    }
+</script>
