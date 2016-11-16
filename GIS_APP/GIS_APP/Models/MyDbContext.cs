@@ -14,6 +14,7 @@ namespace Entity
         }
 
         public DbSet<Position> Positions { get; set; }
+        public DbSet<Point> Points { get; set; }
         public DbSet<Area> Areas { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

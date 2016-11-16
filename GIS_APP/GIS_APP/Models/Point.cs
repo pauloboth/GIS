@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entity
 {
-    [Table("tb_positions")]
-    public class Position
+    [Table("tb_points")]
+    public class Point
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -14,13 +14,12 @@ namespace Entity
 
         [Column("latitude")]
         public double lat { get; set; }
+
         [Column("longitude")]
         public double lon { get; set; }
 
-        [ForeignKey("area")]
-        public long area_id { get; set; }
-        public virtual Area area { get; set; }
-
-        public virtual List<Point> lsPoints { get; set; }
+        [ForeignKey("position")]
+        public long pos_id { get; set; }
+        public virtual Position position { get; set; }
     }
 }

@@ -71,7 +71,6 @@ namespace GIS_APP.WSHandler
             };
             context.Positions.Add(posit);
             context.SaveChanges();
-            //List<Position> lsP = context.Positions.Add();
             Notifications.ToList().ForEach(x =>
             {
                 x.Send(message);

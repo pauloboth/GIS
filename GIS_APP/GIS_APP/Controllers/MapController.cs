@@ -1,4 +1,6 @@
 ﻿using Entity;
+using GIS_APP.WSHandler;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +29,21 @@ namespace GIS_APP.Controllers
         public ActionResult Mobile()
         {
             return View();
+        }
+
+        [HttpPost]
+        public JsonResult Position(string message)
+        {
+            dynamic obj = JsonConvert.DeserializeObject(message);
+            if (obj != null && obj.type != null)
+            {
+                if (obj.type == "mobile" && obj.position != null)
+                {
+                    ServiceProcessHandler handle = new ServiceProcessHandler();
+                    handle.Position((double)obj.position.lat, (double)obj.position.lng);
+                }
+            }
+            return Json(true);
         }
     }
 }

@@ -9,6 +9,7 @@ namespace Entity
     public class Area
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long id { get; set; }
         public string name { get; set; }
 
