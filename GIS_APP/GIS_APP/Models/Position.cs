@@ -1,13 +1,22 @@
-﻿
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-[Table("tb_position")]
-public class Position
+namespace Entity
 {
-    public long id { get; set; }
+    [Table("tb_positions")]
+    public class Position
+    {
+        [Key]
+        public long id { get; set; }
 
-    [Column("latitude")]
-    public double lat { get; set; }
-    [Column("longitude")]
-    public double lon { get; set; }
+        [Column("latitude")]
+        public double lat { get; set; }
+        [Column("longitude")]
+        public double lon { get; set; }
+
+        [ForeignKey("area")]
+        public long area_id { get; set; }
+        public virtual Area area { get; set; }
+    }
 }

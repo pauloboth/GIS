@@ -46,7 +46,6 @@ C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Microso
 C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Microsoft.AspNet.Identity.Owin.dll
 C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Microsoft.Web.Infrastructure.dll
 C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Newtonsoft.Json.dll
-C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Owin.dll
 C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.Helpers.dll
 C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.Mvc.dll
 C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\System.Web.Optimization.dll

@@ -1,4 +1,5 @@
-﻿using Microsoft.CSharp.RuntimeBinder;
+﻿using Entity;
+using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.Web.WebSockets;
 using Newtonsoft.Json;
 using System;
@@ -45,16 +46,32 @@ namespace GIS_APP.WSHandler
 
         public override void OnMessage(string message)
         {
-            Notifications.ToList().ForEach(x =>
+            dynamic obj = JsonConvert.DeserializeObject(message);
+            if (obj != null && obj.type != null)
             {
-                x.Send(message);
-            });
+                if (obj.type == "mobile" && obj.position != null)
+                    Position(obj.position.lat, obj.position.lng);
+            }
         }
 
         public void Position(double lat, double lng)
         {
-            JsonSerializer serialize = new JsonSerializer();
             string message = JsonConvert.SerializeObject(new { lat = lat, lng = lng });
+            long area_id = 1;
+            MyDbContext context = new MyDbContext();
+            long id = 1;
+            try { id = context.Positions.Where(x => x.area_id == area_id).Max(x => x.id) + 1; }
+            catch { }
+            Position posit = new Position
+            {
+                id = id,
+                lat = lat,
+                lon = lng,
+                area_id = area_id,
+            };
+            context.Positions.Add(posit);
+            context.SaveChanges();
+            //List<Position> lsP = context.Positions.Add();
             Notifications.ToList().ForEach(x =>
             {
                 x.Send(message);
