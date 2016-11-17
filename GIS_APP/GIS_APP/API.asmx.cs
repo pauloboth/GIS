@@ -1,4 +1,5 @@
-﻿using GIS_APP.WSHandler;
+﻿using Entity;
+using GIS_APP.WSHandler;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,12 +25,12 @@ namespace GIS_APP
             return "Hello World";
         }
 
-        [WebMethod]
-        public bool Position(double lat, double lng)
-        {
-            ServiceProcessHandler handle = new ServiceProcessHandler();
-            handle.Position(lat, lng);
-            return true;
-        }
+        //[WebMethod]
+        //public bool Position(double lat, double lng)
+        //{
+        //    ServiceProcessHandler handle = new ServiceProcessHandler();
+        //    handle.Position(new Position { lat = lat, lng = lng });
+        //    return true;
+        //}
     }
 }

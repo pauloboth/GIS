@@ -15,7 +15,7 @@ namespace Entity
         [Column("latitude")]
         public double lat { get; set; }
         [Column("longitude")]
-        public double lon { get; set; }
+        public double lng { get; set; }
 
         [ForeignKey("area")]
         public long area_id { get; set; }

@@ -40,7 +40,17 @@ namespace GIS_APP.Controllers
                 if (obj.type == "mobile" && obj.position != null)
                 {
                     ServiceProcessHandler handle = new ServiceProcessHandler();
-                    handle.Position((double)obj.position.lat, (double)obj.position.lng);
+                    Position position = new Position { lat = (double)obj.position.lat, lng = (double)obj.position.lng };
+                    position.lsPoints = new List<Point>();
+                    if (obj.position.points != null)
+                    {
+                        List<dynamic> lsPoint = (List<dynamic>)obj.position.points;
+                        lsPoint.ForEach(x =>
+                        {
+                            position.lsPoints.Add(new Point { lat = (double)x.lat, lng = (double)x.lng });
+                        });
+                    }
+                    handle.Position(position);
                 }
             }
             return Json(true);

@@ -15,6 +15,7 @@
             padding: 0 5px;
         }
 </style>
+<script src="~/Content/gps_math.js"></script>
 <script>
     var lastMark;
     $(function () {
@@ -25,9 +26,12 @@
     var ws;
     var url = window.location.host + "@Url.Content("~/WSHandler.ashx")";
 
-    if (mobile && navigator.geolocation)
-        navigator.geolocation.watchPosition(geo_success, geo_error, { enableHighAccuracy: true, maximumAge: Infinity, timeout: 0 });
-
+    if (navigator.geolocation) {
+        if (mobile)
+            navigator.geolocation.watchPosition(geo_success, geo_error, { enableHighAccuracy: true, maximumAge: Infinity, timeout: 0 });
+        else
+            navigator.geolocation.getCurrentPosition(geo_success, geo_error);
+    }
     //if (navigator.geolocation) {
     //setInterval(function () {
     //    navigator.geolocation.getCurrentPosition(geo_success, geo_error);
@@ -40,26 +44,34 @@
 
     function Position(latitude, longitude) {
         index = $('.positions tr').length;
-        lastMark = { lat: latitude, lng: longitude };
         $('.positions tbody').append($('<tr><td>' + index + '</td><td>' + latitude + '</td><td>' + longitude + '</td></tr>'));
-        var obj = {
-            position: lastMark,
-            type: 'mobile'
-        }
-        var message = JSON.stringify(obj);
-        //ws.send(message);
 
-        $.ajax({
-            type: 'POST',
-            url: '@Url.Action("Position", "Map")',
-            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-            data: { message: message },
-            success: function (response) {
-                console.log(response);
-            }, error: function (error) {
-                $('.positions tbody').append($('<tr><td colspan="3">' + error.responseText + '</td></tr>'));
+        center = { lat: latitude, lng: longitude };
+        if (lastMark) {
+            dist = distance(lastMark, center);
+            if (dist > 0) {
+                var obj = {
+                    position: center,
+                    type: 'mobile',
+                    points: new_point(lastMark, center),
+                }
+                var message = JSON.stringify(obj);
+                //ws.send(message);
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("Position", "Map")',
+                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                    data: { message: message },
+                    success: function (response) {
+                        console.log(response);
+                    }, error: function (error) {
+                        $('.positions tbody').append($('<tr><td colspan="3">' + error.responseText + '</td></tr>'));
+                    }
+                });
             }
-        });
+        }
+        lastMark = center;
     }
     function geo_error(error) {
         console.log(error);
@@ -75,5 +87,19 @@
         ws.onerror = function (event) { console.log(event); };
         ws.onopen = function (event) { console.log(event); };
         ws.onclose = function (event) { console.log(event); };
+    }
+
+    function new_point(p1, p2) {
+        //addPolyline(p1, p2);
+        lat1 = p1.lat;
+        lng1 = p1.lng;
+        lat2 = p2.lat;
+        lng2 = p2.lng;
+
+        brng = bearing(lat1, lng1, lat2, lng2);
+
+        _p = points_of_square(lat1, lng1, lat2, lng2, brng, width / 2);
+        //console.log(point);
+        return { p1: _p[0], p2: _p[1], p3: _p[2], p4: _p[3] };
     }
 </script>
