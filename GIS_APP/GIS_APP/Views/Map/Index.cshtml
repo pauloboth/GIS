@@ -180,10 +180,13 @@
             try {
                 point = JSON.parse(event.data);
                 center = { lat: point.lat, lng: point.lng };
-                addMarker(center);
-                map.setCenter(center);
-                //new_point(last_marker, center);
-                last_marker = center;
+                //addMarker(center);
+                dist = distance(last_marker, center);
+                if (dist > height) {
+                    map.setCenter(center);
+                    new_point(last_marker, center);
+                    last_marker = center;
+                }
             } catch (error) { console.log(error); }
         };
         ws.onerror = function (event) {

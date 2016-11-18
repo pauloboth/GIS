@@ -82,3 +82,4 @@ C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\fr\Npgs
 C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\ja\Npgsql.resources.dll
 C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\zh-CN\Npgsql.resources.dll
 C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\bin\Microsoft.WebSockets.dll
+C:\Users\Paulo_Both\Documents\Projetos\GIS.git\trunk\GIS_APP\GIS_APP\obj\Debug\GIS_APP.csprojResolveAssemblyReference.cache
