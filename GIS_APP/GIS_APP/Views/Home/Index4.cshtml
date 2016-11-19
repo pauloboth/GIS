@@ -32,9 +32,11 @@
     Polylines = [];
     Markers = [];
     Polygons = [];
+    PolygonsArea = [];
     Points = [];
     center = { lat: -27.635424331918777, lng: -54.13765009492636 };
     last_marker = center;
+    last_area = center;
     width = 15;
     height = 15;
     map = new google.maps.Map(document.getElementById('map'), {
@@ -64,11 +66,22 @@
         lng = event.latLng.lng();
         center = { lat: lat, lng: lng };
         dist = distance(last_marker, center);
+        var distArea = distance(last_area, center);
+
+        console.log("lat:"+lat+" lng:"+lng);
         if (dist > height) {
-            //new_point(last_marker, center);
+            new_point(last_marker, center);
             last_marker = center;
             console.log(lat + ', ' + lng);
         }
+
+        if (distArea > 200) {
+            console.log("create area");
+              new_pointArea(last_area, center);
+            areas.push({ point: center, locations: [] });
+            last_area = center;
+        }
+
     });
 
     map.addListener("click", function (event) {
@@ -76,7 +89,7 @@
         lng = event.latLng.lng();
         center = { lat: lat, lng: lng };
         //map.setCenter(center);
-        new_point(last_marker, center);
+       // new_point(last_marker, center);
         last_marker = center;
     });
 
@@ -100,6 +113,28 @@
         Points.push([p1, p2, p3, p4]);
         addPolygon(p1, p2, p3, p4);
     }
+
+    function new_pointArea(p1, p2) {
+        //addPolyline(p1, p2);
+        lat1 = p1.lat;
+        lng1 = p1.lng;
+        lat2 = p2.lat;
+        lng2 = p2.lng;
+
+        brng = bearing(lat1, lng1, lat2, lng2);
+
+        _p = points_of_square(lat1, lng1, lat2, lng2, brng, 200 / 2);
+        //console.log(point);
+
+        p1 = _p[0];
+        p2 = _p[1];
+        p3 = _p[2];
+        p4 = _p[3];
+     //   Points.push([p1, p2, p3, p4]);
+        addPolygonArea(p1, p2, p3, p4);
+        areas.push([p1, p2, p3, p4])
+    }
+
 
     function FilterList(_c) {
         _max_lat = _c.lat + width;
@@ -221,7 +256,7 @@
     function addPolygon(p1, p2, p3, p4) {
         polygon = new google.maps.Polygon({
             map: map,
-            strokeColor: 'red',
+            strokeColor: 'blue',
             strokeOpacity: 1,
             strokeWeight: 1,
             fillColor: 'red',
@@ -230,6 +265,20 @@
         });
         Polygons.push(polygon);
     }
+
+    function addPolygonArea(p1, p2, p3, p4) {
+        polygon = new google.maps.Polygon({
+            map: map,
+            strokeColor: 'orange',
+            strokeOpacity: 1,
+            strokeWeight: 1,
+            fillColor: 'yellow',
+            fillOpacity: 0.5,
+            paths: [p1, p2, p3, p4]
+        });
+        Polygons.push(polygon);
+    }
+
 
     function clearMarkers() {
         $(Polylines).each(function (index, item) { item.setMap(null); });
@@ -316,4 +365,12 @@
             console.log(e)
         }
     };
+</script>
+
+<script>
+    var areas = [];
+
+    function groupCoordenates() {
+
+    }
 </script>
