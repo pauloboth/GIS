@@ -25,6 +25,13 @@
                         Del for clear
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div style="border: 2px solid green; height: 100px; width: 270px; position: relative;">
+                            <div id="way" style="height: 100%; width: 1px; border: 3px solid blue; position: absolute; left: 135px;"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -35,6 +42,7 @@
     Markers = [];
     Polygons = [];
     Points = [];
+    Circles = [];
     center = { lat: -27.635424331918777, lng: -54.13765009492636 };
     last_marker = center;
     width = 15;
@@ -67,7 +75,10 @@
         center = { lat: lat, lng: lng };
         dist = distance(last_marker, center);
         if (dist > height) {
-            //new_point(last_marker, center);
+
+            var _p = new_point(last_marker, center);
+            addPolygon(_p[0], _p[1], _p[2], _p[3]);
+            FilterList(center, _p);
             last_marker = center;
             //console.log(lat + ', ' + lng);
         }
@@ -91,7 +102,7 @@
         lng2 = p2.lng;
 
         brng = bearing(lat1, lng1, lat2, lng2);
-
+        B = brng;
         _p = points_of_square(lat1, lng1, lat2, lng2, brng, width / 2);
         //console.log(point);
 
@@ -100,27 +111,126 @@
         p3 = _p[2];
         p4 = _p[3];
         Points.push([p1, p2, p3, p4]);
-        addPolygon(p1, p2, p3, p4);
+        //_m_lat = (p1.lat + p2.lat + p3.lat + p4.lat) / 4;
+        //_m_lng = (p1.lng + p2.lng + p3.lng + p4.lng) / 4;
+        //addMarker({ lat: _m_lat, lng: _m_lng });
+        //addPolygon(p1, p2, p3, p4);
+        return [p1, p2, p3, p4];
     }
 
-    function FilterList(_c) {
-        _max_lat = _c.lat + width;
-        _min_lat = _c.lat - width;
-        _max_lng = _c.lng + width;
-        _min_lng = _c.lng - width;
-        $(Circles).each(function (index, item) {
-            lat = item.center.lat();
-            lng = item.center.lng();
-            _b_lat = _max_lat > lat && _min_lat < lat;
-            _b_lng = _max_lng > lng && _min_lng < lng;
-            _b = _b_lat && _b_lng;
-            if (_b)
-                item.setOptions({ fillColor: 'blue' });
-            else
-                item.setOptions({ fillColor: 'red' });
-            //return _b_lat && _b_lng;
+    function FilterList(_c, _p) {
+        _width = mtr_grau(width / 2);
+        _max_lat = _c.lat + _width;
+        _min_lat = _c.lat - _width;
+        _max_lng = _c.lng + _width;
+        _min_lng = _c.lng - _width;
+        _c = centerPoint(_p);
+        //console.log('_max_lat:' + _max_lat + ', _min_lat: ' + _min_lat);
+        //console.log('_max_lng:' + _max_lng + ', _min_lng: ' + _min_lng);
+        $(Polygons).each(function (index, item) {
+            _b = false;
+            //lat = item.center.lat();
+            //lng = item.center.lng();
+            _l1 = { lat: item.latLngs.b[0].b[0].lat(), lng: item.latLngs.b[0].b[0].lng() };
+            _l2 = { lat: item.latLngs.b[0].b[1].lat(), lng: item.latLngs.b[0].b[1].lng() };
+            _l3 = { lat: item.latLngs.b[0].b[2].lat(), lng: item.latLngs.b[0].b[2].lng() };
+            _l4 = { lat: item.latLngs.b[0].b[3].lat(), lng: item.latLngs.b[0].b[3].lng() };
+            _l = [_l1, _l2, _l3, _l4];
+            _c2 = centerPoint(_l);
+            dist = distance(_c, _c2);
+            if (dist < width) {
+                console.log(dist);
+                item.setOptions({ fillColor: 'red', strokeColor: 'red' });
+            }
+            else if (dist < (width + width)) {
+                brg = bearing(_c.lat, _c.lng, _c2.lat, _c2.lng);
+                if (brg < (B + 135) && brg > (B - 135)) {
+                    item.setOptions({ fillColor: 'blue', strokeColor: 'blue' });
+                    //var left = 135;
+                    //if (brg > (B - 135)) {
+                    //    left = B - brg;
+                    //} else if (brg < (B + 135)) {
+                    //    left = B + brg;
+                    //}
+                    //left = 135 + left;
+
+                    //$('#way')[0].style.left = left + 'px';
+                }
+            } else
+                item.setOptions({ fillColor: 'green', strokeColor: 'green' });
+
+            //_p2 = [];
+            //for (var i = 0; i < 4; i++) {
+            //    lat = item.latLngs.b[0].b[i].lat();
+            //    lng = item.latLngs.b[0].b[i].lng()
+            //    _p2.push({ lat: lat, lng: lng });
+            //}
+
+            //_b2 = VerificList(_p2, _p);
+            //_b = false;
+            //for (var i = 0; i < 4; i++) {
+            //    lat = item.latLngs.b[0].b[i].lat();
+            //    lng = item.latLngs.b[0].b[i].lng()
+            //    _b_lat = _max_lat > lat && _min_lat < lat;
+            //    _b_lng = _max_lng > lng && _min_lng < lng;
+            //    _b = _b ? _b : (_b_lat && _b_lng);
+            //}
+            //if (_b)
+            //    item.setOptions({ fillColor: 'blue', strokeColor: 'blue' });
+            //else
+            //    item.setOptions({ fillColor: 'red', strokeColor: 'red' });
         });
-        //console.log(list);
+    }
+
+    function VerificList(p1, p2) {
+        _b = false;
+        for (var i = 0; i < 4; i++) {
+            if (!_b) {
+                lat1 = p1[i].lat > p2[0].lat;
+                lat2 = p1[i].lat > p2[1].lat;
+                lat3 = p1[i].lat > p2[2].lat;
+                lat4 = p1[i].lat > p2[3].lat;
+
+                lng1 = p1[i].lng > p2[0].lng;
+                lng2 = p1[i].lng > p2[1].lng;
+                lng3 = p1[i].lng > p2[2].lng;
+                lng4 = p1[i].lng > p2[3].lng;
+
+                _b = lat1 && lat2 && lat3 && lat4 && lng1 + lng2 + lng3 + lng4;
+            }
+            //for (var j = 0; j < 4; j++) {
+            //    var lat1 = p1[i].lat;
+            //    var lng1 = p1[i].lng;
+            //    var lat2 = p2[j].lat;
+            //    var lng2 = p2[j].lng;
+            //    _b = lat1 > lat2 && lng1 > lng2;
+            //    if (!_b)
+            //        return false;
+            //}
+            //if (_b)
+            //    return;
+        }
+        return _b;
+    }
+
+    function centerPoint(p) {
+        _m_lat = (p[0].lat + p[1].lat + p[2].lat + p[3].lat) / 4;
+        _m_lng = (p[0].lng + p[1].lng + p[2].lng + p[3].lng) / 4;
+        p = { lat: _m_lat, lng: _m_lng };
+        //console.log(_m_lat + ', ' + _m_lng);
+        // addMarker(p);
+        var circle = new google.maps.Circle({
+            map: map,
+            strokeColor: 'black',//'#FF0000',
+            strokeOpacity: 1,//0.8,
+            strokeWeight: 1,//2,
+            fillColor: 'black', //'#FF0000',
+            fillOpacity: 1,
+            center: p,
+            radius: 0.5
+        });
+        Circles.push(circle);
+        return p;
     }
 </script>
 <script>
@@ -149,10 +259,10 @@
     function addPolygon(p1, p2, p3, p4) {
         polygon = new google.maps.Polygon({
             map: map,
-            strokeColor: 'red',
+            strokeColor: 'green',
             strokeOpacity: 1,
             strokeWeight: 1,
-            fillColor: 'red',
+            fillColor: 'green',
             fillOpacity: 0.5,
             paths: [p1, p2, p3, p4]
         });
@@ -163,6 +273,7 @@
         $(Polylines).each(function (index, item) { item.setMap(null); });
         $(Markers).each(function (index, item) { item.setMap(null); });
         $(Polygons).each(function (index, item) { item.setMap(null); });
+        $(Circles).each(function (index, item) { item.setMap(null); });
     }
 </script>
 <script>

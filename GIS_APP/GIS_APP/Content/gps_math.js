@@ -2,7 +2,7 @@
 //Note: angles need to be in radians to pass to trig functions
 
 var R = 6371e3; //earth mean radius in km
-
+var B = 0;
 //converts degrees to radians
 function deg2rad(d) {
     return d * (Math.PI / 180);
@@ -68,3 +68,13 @@ function points_of_square(lat1, lon1, lat2, lon2, brng, dist) {
     return [p0, p1, p2, p3];
 }
 
+function grau_mtr(grau) {
+    var mtr = grau * 111319;
+    mtr = Math.round(mtr);
+    return mtr;
+}
+
+function mtr_grau(mtr) {
+    var grau = mtr / 111319;
+    return grau;
+}

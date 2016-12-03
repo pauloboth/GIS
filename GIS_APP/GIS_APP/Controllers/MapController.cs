@@ -26,7 +26,7 @@ namespace GIS_APP.Controllers
             return View(area);
         }
 
-        public ActionResult Mobile()
+        public ActionResult Mobile(string id)
         {
             return View();
         }

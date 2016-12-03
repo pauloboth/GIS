@@ -56,34 +56,34 @@ namespace GIS_APP.WSHandler
 
         public void Position(Position position)
         {
-            //try
-            //{
-            //    long area_id = 1;
-            //    MyDbContext context = new MyDbContext();
-            //    long id = 1;
-            //    try { id = context.Positions.Max(x => x.id) + 1; }
-            //    catch { }
-            //    long point_id = 1;
-            //    try { point_id = context.Points.Max(x => x.id) + 1; }
-            //    catch { }
-            //    if (position.lsPoints != null)
-            //        position.lsPoints.ForEach(x =>
-            //        {
-            //            x.pos_id = id;
-            //            x.id = point_id;
-            //            point_id++;
-            //        });
-            //    position.id = id;
-            //    position.area_id = area_id;
+            try
+            {
+                long area_id = 1;
+                MyDbContext context = new MyDbContext();
+                long id = 1;
+                try { id = context.Positions.Max(x => x.id) + 1; }
+                catch { }
+                long point_id = 1;
+                try { point_id = context.Points.Max(x => x.id) + 1; }
+                catch { }
+                if (position.lsPoints != null)
+                    position.lsPoints.ForEach(x =>
+                    {
+                        x.pos_id = id;
+                        x.id = point_id;
+                        point_id++;
+                    });
+                position.id = id;
+                position.area_id = area_id;
 
-            //    context.Positions.Add(position);
-            //    context.SaveChanges();
-            //}
-            //catch (Exception ex) { }
-            //position.lsPoints.ForEach(x =>
-            //{
-            //    x.position = null;
-            //});
+                context.Positions.Add(position);
+                context.SaveChanges();
+            }
+            catch (Exception ex) { }
+            position.lsPoints.ForEach(x =>
+            {
+                x.position = null;
+            });
             string message = JsonConvert.SerializeObject(position);
             Notifications.ToList().ForEach(x =>
             {
